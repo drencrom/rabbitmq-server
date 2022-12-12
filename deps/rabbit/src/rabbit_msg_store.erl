@@ -2256,13 +2256,13 @@ maybe_roll_to_new_file(
 maybe_roll_to_new_file(_, State) ->
     State.
 
-maybe_compact(State = #msstate { sum_valid_data        = _SumValid,
+maybe_compact(State = #msstate { sum_valid_data        = SumValid,
                                  sum_file_size         = SumFileSize,
                                  gc_pid                = GCPid,
                                  pending_gc_completion = Pending,
                                  file_summary_ets      = FileSummaryEts,
                                  file_size_limit       = FileSizeLimit })
-  when SumFileSize > 2 * FileSizeLimit -> %andalso
+  when SumFileSize > 2 * FileSizeLimit andalso
 
     %% @todo We should probably check for compaction only the files that received acked, not all?
 
@@ -2273,7 +2273,7 @@ maybe_compact(State = #msstate { sum_valid_data        = _SumValid,
 
 %% @todo Instead of this we should only attempt to compact files
 %%       until we find a file that can't be compacted maybe?
-%       (SumFileSize - SumValid) / SumFileSize > ?GARBAGE_FRACTION ->
+       (SumFileSize - SumValid) / SumFileSize > ?GARBAGE_FRACTION ->
     %% TODO: the algorithm here is sub-optimal - it may result in a
     %% complete traversal of FileSummaryEts.
     First = ets:first(FileSummaryEts),
